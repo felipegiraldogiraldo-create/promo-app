@@ -1,0 +1,10 @@
+{
+  "files": {
+    "main.js": "/promo-app/static/js/main.7abf9619.js",
+    "index.html": "/promo-app/index.html",
+    "main.7abf9619.js.map": "/promo-app/static/js/main.7abf9619.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.7abf9619.js"
+  ]
+}
