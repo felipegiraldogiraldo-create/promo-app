@@ -91,6 +91,13 @@ setSales(prev => ({ ...prev, [id]: data }));
 setSalesModal(null);
 }, [storeKey]);
 
+const deleteSales = useCallback(async (asin, date) => {
+const id = `${asin}_${date}`;
+try { await deleteDoc(doc(db, `${storeKey}_sales`, id)); } catch(e){}
+setSales(prev => { const n = { ...prev }; delete n[id]; return n; });
+setSalesModal(null);
+}, [storeKey]);
+
 const addAsin = useCallback(async (asinData) => {
 try { await setDoc(doc(db, `${storeKey}_asins`, asinData.asin), asinData); } catch(e){}
 setAsins(prev => [...prev, asinData]);
@@ -226,35 +233,32 @@ verticalAlign:'top'
 }}>
 {day && (
 <div style={{ display:'flex', flexDirection:'column', height:'100%', justifyContent:'space-between' }}>
-{/* Promo label */}
 <div
 onClick={() => setPromoModal({ asin: asin.asin, date: dateStr })}
-style={{ flex:1, display:'flex', alignItems:'center', justifyContent:'center',
-cursor:'pointer' }}>
+style={{ flex:1, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer' }}>
 {cellPromos.length > 0 && (
 <span style={{ fontSize:9, color:'#fff', fontWeight:600, lineHeight:1.1 }}>
 {cellPromos[0].discount}
 </span>
 )}
 </div>
-{/* Sales row: show units if logged, or $ button for past/today */}
 {isPast && (
 <div
 onClick={(e) => { e.stopPropagation(); setSalesModal({ asin: asin.asin, date: dateStr, asinData: asin }); }}
 style={{
-background: sale ? 'rgba(34,211,238,0.15)' : 'rgba(255,255,255,0.04)',
-borderTop: '1px solid rgba(255,255,255,0.06)',
-cursor:'pointer', padding:'1px 2px',
+background: sale ? 'rgba(34,211,238,0.18)' : 'rgba(255,255,255,0.04)',
+borderTop: '1px solid rgba(255,255,255,0.07)',
+cursor:'pointer', padding:'1px 3px',
 display:'flex', alignItems:'center', justifyContent:'center', gap:2,
-minHeight:14
+minHeight:15
 }}>
 {sale ? (
 <>
 <span style={{ fontSize:9, color:'#22D3EE', fontWeight:700 }}>{sale.units}u</span>
-<span style={{ fontSize:8, color:'#64748B' }}>${sale.revenue}</span>
+<span style={{ fontSize:8, color:'#94A3B8' }}>${sale.revenue}</span>
 </>
 ) : (
-<span style={{ fontSize:9, color:'#334155' }}>+ $</span>
+<span style={{ fontSize:9, color:'#334155' }}>+$</span>
 )}
 </div>
 )}
@@ -265,19 +269,16 @@ minHeight:14
 })}
 </tr>
 ))}
-{/* ADD ASIN ROW */}
 <tr>
 <td colSpan={cells.length + 1}
-style={{ background:'#0A1628', border:'1px solid #334155',
-padding:'10px 12px', textAlign:'center' }}>
+style={{ background:'#0A1628', border:'1px solid #334155', padding:'10px 12px', textAlign:'center' }}>
 <button
 onClick={() => setAsinModal(true)}
 style={{ background:'transparent', border:'1px dashed #334155',
 color:'#475569', borderRadius:8, padding:'6px 20px',
-cursor:'pointer', fontSize:12, fontWeight:500,
-transition:'all 0.2s' }}
-onMouseEnter={e => { e.target.style.borderColor='#3B82F6'; e.target.style.color='#3B82F6'; }}
-onMouseLeave={e => { e.target.style.borderColor='#334155'; e.target.style.color='#475569'; }}>
+cursor:'pointer', fontSize:12, fontWeight:500 }}
+onMouseEnter={e => { e.currentTarget.style.borderColor='#3B82F6'; e.currentTarget.style.color='#3B82F6'; }}
+onMouseLeave={e => { e.currentTarget.style.borderColor='#334155'; e.currentTarget.style.color='#475569'; }}>
 + Add ASIN
 </button>
 </td>
@@ -287,11 +288,10 @@ onMouseLeave={e => { e.target.style.borderColor='#334155'; e.target.style.color=
 </div>
 )}
 
-{/* Legend */}
 <div style={{ display:'flex', gap:16, marginTop:16, flexWrap:'wrap', alignItems:'center' }}>
 {[
 { color:'#E8920A', label:'Deal (confirmed)' },
-{ color:'#FDEFC3', label:'Deal (window TBD)', border:'1px solid #F59E0B' },
+{ color:'#FDEFC3', label:'Deal (window)', border:'1px solid #F59E0B' },
 { color:'#16A34A', label:'Coupon' },
 { color:'#64748B', label:'Strike Price' },
 ].map(l => (
@@ -301,11 +301,11 @@ onMouseLeave={e => { e.target.style.borderColor='#334155'; e.target.style.color=
 </div>
 ))}
 <div style={{ display:'flex', alignItems:'center', gap:6 }}>
-<div style={{ width:14, height:8, borderRadius:2, background:'rgba(34,211,238,0.15)', border:'1px solid rgba(34,211,238,0.3)' }}/>
+<div style={{ width:26, height:10, borderRadius:2, background:'rgba(34,211,238,0.18)', border:'1px solid rgba(34,211,238,0.3)' }}/>
 <span style={{ color:'#94A3B8', fontSize:12 }}>Sales logged</span>
 </div>
 <span style={{ color:'#475569', fontSize:11, marginLeft:'auto' }}>
-Click any cell = add/edit promo · Click + $ bar = log sales
+Top of cell = promo · Bottom bar = log sales
 </span>
 </div>
 </div>
@@ -326,6 +326,7 @@ onClose={() => setPromoModal(null)}
 modal={salesModal}
 existingSales={sales[`${salesModal.asin}_${salesModal.date}`]}
 onSave={saveSales}
+onDelete={deleteSales}
 onClose={() => setSalesModal(null)}
 />
 )}
