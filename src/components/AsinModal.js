@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-export default function AsinModal({ existingLines, onSave, onClose }) {
+export default function AsinModal({ existingLines, onSave, onClose, editData, onDelete }) {
 const [asin, setAsin] = useState('');
 const [name, setName] = useState('');
 const [line, setLine] = useState(existingLines[0] || '');
@@ -10,7 +10,7 @@ const [error, setError] = useState('');
 
 const finalLine = line === '__new__' ? newLine.trim() : line;
 
-const handleSave = () => {
+useEffect(() => { if (editData) { setAsin(editData.asin||''); setName(editData.name||''); setLine(editData.line||existingLines[0]||''); setPrice(editData.price ? String(editData.price) : ''); } }, [editData]);
 if (!asin.trim()) { setError('ASIN code is required'); return; }
 if (!name.trim()) { setError('Product name is required'); return; }
 if (!finalLine) { setError('Product line is required'); return; }
@@ -28,7 +28,7 @@ alignItems:'center', justifyContent:'center', zIndex:1000, padding:16 }}>
 <div style={{ background:'#1E293B', borderRadius:12, padding:28, width:'100%', maxWidth:440,
 border:'1px solid #334155', maxHeight:'90vh', overflowY:'auto' }}>
 <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:20 }}>
-<h3 style={{ color:'#F1F5F9', fontSize:16, fontWeight:600, margin:0 }}>Add New ASIN</h3>
+<h3 style={{ color:'#F1F5F9', fontSize:16, fontWeight:600, margin:0 }}>{editData ? 'Edit ASIN' : 'Add New ASIN'}</h3>
 <button onClick={onClose} style={{ background:'none', border:'none', color:'#94A3B8',
 cursor:'pointer', fontSize:20, lineHeight:1 }}>×</button>
 </div>
@@ -83,7 +83,7 @@ placeholder="e.g. 24.97"
 style={inp}/>
 </div>
 
-<div style={{ display:'flex', gap:10, marginTop:4 }}>
+<div style={{ display:'flex', gap:10, marginTop:4 }}>{editData && onDelete && <button onClick={() => onDelete(editData.asin)} style={{ background:'#EF4444', border:'none', color:'#fff', borderRadius:8, padding:'10px 0', cursor:'pointer', fontSize:13, fontWeight:600, marginRight:'auto', paddingLeft:16, paddingRight:16 }}>Delete ASIN</button>}
 <button onClick={onClose}
 style={{ flex:1, background:'transparent', border:'1px solid #334155',
 color:'#94A3B8', borderRadius:8, padding:'10px 0',
@@ -94,7 +94,7 @@ Cancel
 style={{ flex:2, background:'#3B82F6', border:'none', color:'#fff',
 borderRadius:8, padding:'10px 0', cursor:'pointer',
 fontSize:14, fontWeight:600 }}>
-Add ASIN
+{editData ? 'Update ASIN' : 'Add ASIN'}
 </button>
 </div>
 </div>
