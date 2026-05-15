@@ -71,10 +71,10 @@ export default function CalendarView({ account, brand, onBack }) {
   }, [storeKey, isRomano]);
 
   const addPromo = useCallback(async (promo) => {
-    const id = `p_${Date.now()}`;
+    const id = promo.editId || `p_${Date.now()}`;
     const full = { ...promo, id };
     try { await setDoc(doc(db, `${storeKey}_promos`, id), full); } catch(e){}
-    setPromos(prev => [...prev, full]);
+    setPromos(prev => promo.editId ? prev.map(p => p.id === promo.editId ? full : p) : [...prev, full]);
     setPromoModal(null);
   }, [storeKey]);
 
