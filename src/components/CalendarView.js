@@ -31,7 +31,7 @@ const [month, setMonth] = useState(4);
 const [tab, setTab] = useState('calendar');
 const [promoModal, setPromoModal] = useState(null);
 const [salesModal, setSalesModal] = useState(null);
-const [asinModal, setAsinModal] = useState(false);
+const [asinModal, setAsinModal] = useState({open:false, editData:null});
 const [filterLine, setFilterLine] = useState('ALL');
 const [loading, setLoading] = useState(true);
 
@@ -101,7 +101,7 @@ setSalesModal(null);
 const addAsin = useCallback(async (asinData) => {
 try { await setDoc(doc(db, `${storeKey}_asins`, asinData.asin), asinData); } catch(e){}
 setAsins(prev => [...prev, asinData]);
-setAsinModal(false);
+setAsinModal({open:false, editData:null});
 }, [storeKey]);
 
 const daysInMonth = new Date(year, month+1, 0).getDate();
@@ -161,7 +161,7 @@ style={{ background:'#1E293B', border:'1px solid #334155', color:'#94A3B8', bord
 {filteredAsins.length === 0 ? (
 <div style={{ color:'#64748B', padding:32, textAlign:'center' }}>
 No ASINs found.
-<button onClick={() => setAsinModal(true)}
+<button onClick={() => setAsinModal({open:true, editData:null})}
 style={{ display:'block', margin:'16px auto 0', background:'#3B82F6', border:'none',
 color:'#fff', borderRadius:8, padding:'8px 20px', cursor:'pointer', fontSize:13, fontWeight:600 }}>
 + Add First ASIN
@@ -273,7 +273,7 @@ minHeight:15
 <td colSpan={cells.length + 1}
 style={{ background:'#0A1628', border:'1px solid #334155', padding:'10px 12px', textAlign:'center' }}>
 <button
-onClick={() => setAsinModal(true)}
+onClick={() => setAsinModal({open:true, editData:null})}
 style={{ background:'transparent', border:'1px dashed #334155',
 color:'#475569', borderRadius:8, padding:'6px 20px',
 cursor:'pointer', fontSize:12, fontWeight:500 }}
@@ -330,11 +330,13 @@ onDelete={deleteSales}
 onClose={() => setSalesModal(null)}
 />
 )}
-{asinModal && (
+{asinModal.open && (
 <AsinModal
 existingLines={lines.filter(l => l !== 'ALL')}
 onSave={addAsin}
-onClose={() => setAsinModal(false)}
+editData={asinModal.editData}
+onDelete={deleteAsin}
+onClose={() => setAsinModal({open:false, editData:null})}
 />
 )}
 </div>
