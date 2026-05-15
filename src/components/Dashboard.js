@@ -13,7 +13,7 @@ export default function Dashboard({ asins, promos, sales }) {
   const daysInMonth = new Date(viewYear, viewMonth+1, 0).getDate();
 
   // Build daily data for the month
-  const dailyData = useMemo(() => {
+  const dailyData = useMemo(() => {h
     return Array.from({ length: daysInMonth }, (_, i) => {
       const day = i + 1;
       const ds  = `${viewYear}-${String(viewMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
@@ -206,7 +206,7 @@ export default function Dashboard({ asins, promos, sales }) {
           <div style={{ fontSize:32, marginBottom:12 }}>📊</div>
           <div style={{ color:'#94A3B8', fontSize:15, marginBottom:6 }}>No sales data yet</div>
           <div style={{ color:'#475569', fontSize:13 }}>
-            Right-click any cell in the calendar to log daily sales
+            Click the bar at the bottom of a past or today's cell to log daily sales
           </div>
         </div>
       )}
