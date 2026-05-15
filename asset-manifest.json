@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/promo-app/static/js/main.bac36769.js",
+    "main.js": "/promo-app/static/js/main.4d27a612.js",
     "index.html": "/promo-app/index.html",
-    "main.bac36769.js.map": "/promo-app/static/js/main.bac36769.js.map"
+    "main.4d27a612.js.map": "/promo-app/static/js/main.4d27a612.js.map"
   },
   "entrypoints": [
-    "static/js/main.bac36769.js"
+    "static/js/main.4d27a612.js"
   ]
 }
